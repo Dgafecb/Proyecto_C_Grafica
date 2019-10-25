@@ -10,7 +10,7 @@
 #include <sstream>
 #include <glm/glm.hpp>
 #include <FreeImage.h>
-#define numTEXT 3
+#define numTEXT 4
 using namespace std;
 int temp_laberinto[31][31]={//despues sera generado por dfs
 {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -29,7 +29,7 @@ int temp_laberinto[31][31]={//despues sera generado por dfs
 {0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0},
 {0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0},
 {0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0},
-{0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0},
+{0, 1, -1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 1, 0, -1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0},
 {0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0},
 {0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0},
 {0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 0, 1, 0, 1, 0},
@@ -38,7 +38,7 @@ int temp_laberinto[31][31]={//despues sera generado por dfs
 {0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0},
 {0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0},
 {0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0},
-{0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0},
+{0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 1, 1, 1, -1, 1, 0},
 {0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0},
 {0, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0},
 {0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0},
@@ -48,15 +48,17 @@ int temp_laberinto[31][31]={//despues sera generado por dfs
 int colors = 0;// variable que permite indicar el color seleccionado
 float izq_dere= 0.0f; // variable para modificar la posicion de la luz en el eje X
 float arriba_abajo = 0.0f; // variable para modificar la posicion de la luz en el eje Y
-float camara_x = 0.0f;
+float camara_x = -22.5f;
 float camara_y = 0.0f;
-float camara_z = 0.0f;
+float camara_z = -22.5f;
+float posicion_x = 0.0f;
+float posicion_z = 0.0f;
 int girolookat_x= 0.0;
 int girolookat_y= 0.0;
 int girolookat_z= 0.0;
 //texturas
 GLuint texID[numTEXT];
-char* textureFileNames[numTEXT] = {"assets/metal_test.jpeg","assets/piso_2.jpeg","assets/pared_pasto.jpeg"};//ignorar advertencia por esta linea
+char* textureFileNames[numTEXT] = {"assets/metal_test.jpeg","assets/piso_2.jpeg","assets/pared_pasto.jpeg","assets/puerta.jpeg"};//ignorar advertencia por esta linea
 void loadTextures() {
   int i;
   glGenTextures(numTEXT,texID);  // Obtener el Id textura
@@ -181,23 +183,26 @@ void keyboardFunc( unsigned char key, int x, int y ){
     case 27: // Escape key
         exit(0);
         break;
-    case 'c':
-        // modifica el color activo haciando variar la variable global colors
-		colors+=1;
-        colors%=4;
-        break;
     case 'r':
       camara_y+=0.5; break;
     case 'f':
       camara_y-=0.5; break;
     case 'a':
-      camara_x+=0.5; break;
+      camara_x-=0.5; 
+      posicion_x-=0.5;
+      break;
     case 'd':
-      camara_x-=0.5; break;
+      camara_x+=0.5;
+      posicion_x+=0.5;
+      break;
     case 'w':
-      camara_z+= 0.5; break;
+      camara_z-= 0.5; 
+      posicion_z-=0.5;
+      break;
     case 's':
-      camara_z-=0.5; break;
+      camara_z+=0.5; 
+      posicion_z+=0.5;
+      break;
       /*
     case 'g':
       girolookat_x =(girolookat_x+5) % 360;break;
@@ -235,8 +240,6 @@ void specialFunc( int key, int x, int y ){
         izq_dere += 0.5f;
 		break;
     }
-
-	// this will refresh the screen so that the user sees the light position
     glutPostRedisplay();
 }
 void dibujarObj(vector<glm::vec3> vertices, vector<glm::vec2> uvs, vector <glm::vec3> normales, int indiceTEX){
@@ -287,6 +290,7 @@ void draw(void){
 
 
     bool bloque = loadOBJ("assets/test_4.obj",vertices,uvs,normales);
+    //bloque=false;//quito el laberinto para poder testear la ubicacion inicial del personaje
 	if(bloque){ // verificamos si pudo leer el archivo
         int i,j;
         float scale = 2.0f;
@@ -301,6 +305,22 @@ void draw(void){
                     dibujarObj(vertices,uvs,normales,2);
                     glPopMatrix();
                 }
+                if(i!=0  && j!=0){
+                 if((temp_laberinto[i][j] == -1) && (temp_laberinto[i][j-1]==1) ){
+                    glPushMatrix();
+                    glTranslatef((j+1)*scale,0.0f,(i+1)*scale);
+                    glScalef(0.1f,3.0f,1.0f);
+                    dibujarObj(vertices,uvs,normales,3);
+                    glPopMatrix();
+                }
+                if((temp_laberinto[i][j] == -1) && (temp_laberinto[i][j-1]==0) ){
+                    glPushMatrix();
+                    glTranslatef((j+1)*scale,0.0f,(i+1)*scale);
+                    glScalef(1.0f,3.0f,0.1f);
+                    dibujarObj(vertices,uvs,normales,3);
+                    glPopMatrix();
+                }
+                }
             }
         }
         glPopMatrix();
@@ -311,6 +331,19 @@ void draw(void){
     glScalef(62.0,0.0,62.0);
     piso();
     glPopMatrix();
+    vector<glm::vec3> vertices_2;
+    vector<glm::vec2> uvs_2;
+    vector<glm::vec3> normales_2;
+    bool robot = loadOBJ("assets/robot_1.obj",vertices_2,uvs_2,normales_2);
+    if(robot){
+        glPushMatrix();
+        //
+        glTranslatef(-30.0f+posicion_x,-3.0f,-28.5f+posicion_z);
+        glScalef(0.9f,0.8f,0.9f);
+        dibujarObj(vertices_2,uvs_2,normales_2,0);
+        glPopMatrix();
+        
+    }
 }
 void drawScene(void){
     int i;
@@ -319,7 +352,30 @@ void drawScene(void){
     glLoadIdentity();
     // camara posicionada en [0,10,10] mirando hacia [0,0,0]
     // con [0,0,1] como vector hacia arriba
-    gluLookAt((GLfloat)0.0+camara_x,(GLfloat) 5.0+camara_y,(GLfloat) -30.0+camara_z,
+    //gluLookAt((GLfloat)0.0+camara_x,(GLfloat) 5.0+camara_y,(GLfloat) -30.0+camara_z,
+    //          (GLfloat)0.0+camara_x,(GLfloat) 0.0+camara_y,(GLfloat) 0.0+camara_z,
+    //            0,1,0);
+    if(camara_x<-22.5){
+        camara_x = -22.5;
+        posicion_x +=0.5;
+        
+    }
+    if(camara_x>22.5){
+        camara_x = 22.5;
+        posicion_x-=0.5;
+    }
+    if(camara_z<-22.5){
+        camara_z = -22.5;
+        posicion_z += 0.5;
+        
+    }
+    if(camara_z>22.5){
+        camara_z = 22.5;
+        posicion_z-=0.5;
+    }
+    
+        
+    gluLookAt((GLfloat)0.0+camara_x,(GLfloat) 20.0+camara_y,(GLfloat) 1.0+camara_z,
               (GLfloat)0.0+camara_x,(GLfloat) 0.0+camara_y,(GLfloat) 0.0+camara_z,
                 0,1,0);
     GLfloat diffColors[4][4] = { {0.5, 0.5, 0.9, 1.0},
