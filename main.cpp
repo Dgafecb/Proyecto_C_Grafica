@@ -239,7 +239,7 @@ void drawScene(void){
 
     GLfloat Lt0diff[] = {1.0,1.0,1.0,1.0};
     // posicion de la luz
-    GLfloat Lt0pos[] = {1.0f+izq_dere, 1.0f+arriba_abajo, 5.0f, 1.0f};
+    GLfloat Lt0pos[] = {3.0f+izq_dere, 10.0f+arriba_abajo, 5.0f, 1.0f};
     //glLightfv(GL_LIGHT0, GL_DIFFUSE, Lt0diff);
     glLightfv(GL_LIGHT0, GL_POSITION, Lt0pos);
     draw();
