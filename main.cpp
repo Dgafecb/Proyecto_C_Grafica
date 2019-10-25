@@ -1,6 +1,5 @@
 //librerias:
 //glm: sudo apt-get install libglm-dev
-//freeImage: sudo apt-get install libfreeimage3 libfreeimage-dev
 #include <stdlib.h>
 #include <GL/glut.h>
 #include <GL/freeglut.h>
@@ -9,57 +8,89 @@
 #include <iostream>
 #include <sstream>
 #include <glm/glm.hpp>
-#include <FreeImage.h>
-#define numTEXT 3
 using namespace std;
-   
+int matriz[31][31]={
+{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+{1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0},
+{0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0},
+{0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0},
+{0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0},
+{0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0},
+{0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 1, 1, 1, 0, 1, 0, 0, 1, 0, 1, 0},
+{0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 1, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0},
+{0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0},
+{0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0},
+{0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0},
+{0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0},
+{0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 1, 0},
+{0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0},
+{0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0},
+{0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0},
+{0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0},
+{0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0},
+{0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0},
+{0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 0, 1, 0, 1, 0},
+{0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0},
+{0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0},
+{0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0},
+{0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0},
+{0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0},
+{0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0},
+{0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0},
+{0, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0},
+{0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0},
+{0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1},
+{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+};
 int colors = 0;// variable que permite indicar el color seleccionado
 float izq_dere= 0.0f; // variable para modificar la posicion de la luz en el eje X
 float arriba_abajo = 0.0f; // variable para modificar la posicion de la luz en el eje Y
-
-//texturas
-GLuint texID[numTEXT];
-char* textureFileNames[numTEXT] = {"assets/metal_test.jpeg","cieloNubes.jpg","vereda.jpg"};//ignorar advertencia por esta linea
-void loadTextures() {
-  int i;
-  glGenTextures(numTEXT,texID);  // Obtener el Id textura
-  for (i = 0; i < numTEXT; i++) {
-     void* imgData;      // Puntero a data del Archivo
-     int imgWidth;   // Ancho de Imagen
-     int imgHeight;  // Alto de Imagen
-     FREE_IMAGE_FORMAT format = FreeImage_GetFIFFromFilename(textureFileNames[i]);
-     if (format == FIF_UNKNOWN) {
-        printf("Archivo de Imagen desconocido %s\n", textureFileNames[i]);
-            continue;
-        }
-     FIBITMAP* bitmap = FreeImage_Load(format, textureFileNames[i], 0);  //Leer Imagen
-     if (!bitmap) {
-        printf("Fallo la carga de imagen %s\n", textureFileNames[i]);
-        continue;
-     }
-     FIBITMAP* bitmap2 = FreeImage_ConvertTo24Bits(bitmap);  // Convierte a RGB
-     FreeImage_Unload(bitmap);
-     imgData = FreeImage_GetBits(bitmap2);
-     imgWidth = FreeImage_GetWidth(bitmap2);
-     imgHeight = FreeImage_GetHeight(bitmap2);
-     if (imgData) {
-         printf("Texture cargada %s, tamanio %dx%d\n",
-                                     textureFileNames[i], imgWidth, imgHeight);
-         int format; // Formato del color.
-         if ( FI_RGBA_RED == 0 )
-            format = GL_RGB;
-         else
-            format = GL_BGR;
-            glBindTexture( GL_TEXTURE_2D, texID[i] );  // Cargando textura
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imgWidth, imgHeight, 0, format,GL_UNSIGNED_BYTE, imgData);
-              glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        }
-        else {
-            printf("Fallo la carga de textura %s\n", textureFileNames[i]);
-        }
+/*int filas= 0;
+int cols= 0;
+int** leer_matriz(char *fileName){
+  FILE *fp=fopen(fileName,"r");
+  if(fp==NULL){
+    exit(EXIT_FAILURE);
+  }
+  char linea[1000];
+  fgets(linea,999,fp);
+  char *token = strtok(linea," ");
+  filas = atoi(token);
+  token =strtok(NULL," ");
+  cols = atoi(token);
+  int **matriz=new int*[filas];
+  for(int i=0 ; i<filas ;i++){
+    matriz[i]=new int[cols];
+    fgets(linea,999,fp);
+    token= strtok(linea," ");
+    matriz[i][0]=atoi(token);
+    for(int j=0 ; j<cols ;j++){
+      token=strtok(NULL," ");
+      matriz[i][j]=atoi(token);
+      printf("matriz\n");
+      print("%d",matriz[i][j]);
     }
+  }
+  fclose(fp);
+  return matriz;
 }
-//
+*/
+void dibujar_mapa(){
+  //int **matriz=leer_matriz("laberinto.txt");
+
+  for(int i=0 ; i<31;i++ ){
+    for(int j=0 ; j<31 ; j++){
+      //glColor4s(0.5f,0.5f,0.5f);
+      glPushMatrix();
+      glTranslatef((GLfloat) (0.05*(i+1)),(GLfloat) (0.05*(j+1)),0.0f);
+      if( matriz[i][j]==0){
+          glutSolidCube(0.05);
+      }
+      glPopMatrix();
+    }
+
+  }
+}
 bool loadOBJ(const char* path, vector<glm::vec3> & out_vertices,
              vector<glm::vec2> & out_uvs,
              vector<glm::vec3> & out_normals){
@@ -71,13 +102,13 @@ bool loadOBJ(const char* path, vector<glm::vec3> & out_vertices,
     FILE * file = fopen(path,"r");
     if(file== NULL){
         printf("No se pudo leer el archivo\n");
-        return false;        
+        return false;
     }
     while(true){
         char lineHeader[128];//para cada linea
         int res = fscanf(file,"%s", lineHeader);
         if(res == EOF)//chequea si encuentra el final de la linea
-            break;    
+            break;
         else{
             //verificamos las cabezeras de cada linea y luego parseamos los datos
             if( strcmp(lineHeader, "v" ) == 0){
@@ -101,7 +132,7 @@ bool loadOBJ(const char* path, vector<glm::vec3> & out_vertices,
                 int matches = fscanf(file, "%d/%d/%d %d/%d/%d %d/%d/%d\n", &vertexIndex[0],&uvIndex[0],
                                      &normalIndex[0], &vertexIndex[1], &uvIndex[1], &normalIndex[1],
                                      &vertexIndex[2], &uvIndex[2], &normalIndex[2] );
-                
+
                 if(matches!=9){
                     printf("No se pudo parsear las lineas que contienen las caras\n");
                     return false;
@@ -175,54 +206,44 @@ void specialFunc( int key, int x, int y ){
 	// this will refresh the screen so that the user sees the light position
     glutPostRedisplay();
 }
-void dibujarObj(vector<glm::vec3> vertices, vector<glm::vec2> uvs, vector <glm::vec3> normales, int indiceTEX){
-        glEnable(GL_TEXTURE_2D);
-        glBindTexture(GL_TEXTURE_2D, texID[indiceTEX]);//textura del metal
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    for(int i=0; i<vertices.size()-2;i++){ //usamos la informacion ya leida para dibujar el objeto
-            int size = vertices.size();
-            glBegin(GL_TRIANGLES);
-            glNormal3d(normales[i].x,normales[i].y,normales[i].z);
-            glVertex3d(vertices[i].x,vertices[i].y,vertices[i].z);
-            glTexCoord2f(uvs[i].x,uvs[i].y);
-            glNormal3d(normales[(i+1)].x,normales[(i+1)].y,normales[(i+1)].z);
-            glVertex3d(vertices[(i+1)].x,vertices[(i+1)].y,vertices[(i+1)].z);
-            glTexCoord2f(uvs[i+1].x,uvs[i+1].y);
-            glNormal3d(normales[(i+2)].x,normales[(i+2)].y,normales[(i+2)].z);
-            glVertex3d(vertices[(i+2)].x,vertices[(i+2)].y,vertices[(i+2)].z);
-            glTexCoord2f(uvs[i+2].x,uvs[i+2].y);    
-            glEnd();
-            } 
-        glDisable(GL_TEXTURE_2D);
-}
 void draw(void){
     vector<glm::vec3> vertices;
     vector<glm::vec2> uvs;
     vector<glm::vec3> normales;
     bool test = loadOBJ("assets/test_4.obj",vertices,uvs,normales);
+/*
 	if(test){ // verificamos si pudo leer el archivo
+        //printf("%lu\n", vertices.size());
         glPushMatrix();
         glTranslatef(1.0f,0.0f,0.0f);// posicion inicial del objeto
         //glScalef(0.5f,0.5f,0.5f);
-        dibujarObj(vertices,uvs,normales,0);//creo el primer objeto( para cada parte del laberinto, con su indice de textura (0)
+        for(int i=0; i<vertices.size();i++){
+            printf("%lf %lf %lf\n", vertices[i].x,vertices[i].y,vertices[i].z);
+            int size = vertices.size();
+            glBegin(GL_TRIANGLES);
+            glNormal3d(normales[i].x,normales[i].y,normales[i].z);
+            glVertex3d(vertices[i].x,vertices[i].y,vertices[i].z);
+            glNormal3d(normales[(i+1)%size].x,normales[(i+1)%size].y,normales[(i+1)%size].z);
+            glVertex3d(vertices[(i+1)%size].x,vertices[(i+1)%size].y,vertices[(i+1)%size].z);
+            glNormal3d(normales[(i+2)%size].x,normales[(i+2)%size].y,normales[(i+2)%size].z);
+            glVertex3d(vertices[(i+2)%size].x,vertices[(i+2)%size].y,vertices[(i+2)%size].z);
+            glEnd();
+            }
         glPopMatrix();
-        
-        glPushMatrix();
-        glTranslatef(2.0,0.0,2.0);
-        dibujarObj(vertices,uvs,normales,0);
-        
-        glPopMatrix();
-    }
-    
+    } */
+    dibujar_mapa();
+
+
 }
+
 void drawScene(void){
     int i;
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glMatrixMode( GL_MODELVIEW );  
-    glLoadIdentity();             
-    // camara posicionada en [0,10,10] mirando hacia [0,0,0] 
-    // con [0,0,1] como vector hacia arriba
-    gluLookAt(0.0, 10.0, 10.0,
+    glMatrixMode( GL_MODELVIEW );
+    glLoadIdentity();
+    // camara posicionada en [0,0,5] mirando hacia [0,0,0]
+    // con [0,1,0] como vector hacia arriba
+    gluLookAt(0.0, 0.0, 5.0,
               0.0, 0.0, 0.0,
               0.0, 1.0, 0.0);
     GLfloat diffColors[4][4] = { {0.5, 0.5, 0.9, 1.0},
@@ -239,7 +260,8 @@ void drawScene(void){
 
     GLfloat Lt0diff[] = {1.0,1.0,1.0,1.0};
     // posicion de la luz
-    GLfloat Lt0pos[] = {3.0f+izq_dere, 10.0f+arriba_abajo, 5.0f, 1.0f};
+    GLfloat Lt0pos[] = {1.0f+izq_dere, 1.0f+arriba_abajo, 5.0f, 1.0f};
+
     //glLightfv(GL_LIGHT0, GL_DIFFUSE, Lt0diff);
     glLightfv(GL_LIGHT0, GL_POSITION, Lt0pos);
     draw();
@@ -247,13 +269,9 @@ void drawScene(void){
 }
 
 void initRendering(){
-    glEnable(GL_DEPTH_TEST);   
-    glEnable(GL_LIGHTING);     
-    glEnable(GL_LIGHT0);       // luz #0.
-    //glEnable(GL_NORMALIZE);
-    glEnable(GL_COLOR_MATERIAL);
-    loadTextures();
-
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHT0);       // light #0.
 }
 void reshapeFunc(int w, int h){
     if (w > h) {
@@ -267,14 +285,17 @@ void reshapeFunc(int w, int h){
 }
 
 int main( int argc, char** argv ){
+
+    //funcion para cargar objetos
     glutInit(&argc,argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH );
+
     glutInitWindowPosition( 60, 60 );
     glutInitWindowSize( 800, 600 );
     glutCreateWindow("Test");
     initRendering();
-    glutKeyboardFunc(keyboardFunc); 
-    glutSpecialFunc(specialFunc);   
+    glutKeyboardFunc(keyboardFunc); // Handles "normal" ascii symbols
+    glutSpecialFunc(specialFunc);   // Handles "special" keyboard keys
     glutReshapeFunc( reshapeFunc );
     glutDisplayFunc( drawScene );
     glutMainLoop( );
