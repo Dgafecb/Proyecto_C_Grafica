@@ -277,7 +277,7 @@ void draw(void){
     
     glPushMatrix();
     glTranslatef(-32.0,0.0,-32.0);
-    glScalef(70.0,0.0,70.0);
+    glScalef(62.0,0.0,62.0);
     piso();
     glPopMatrix();
 }
