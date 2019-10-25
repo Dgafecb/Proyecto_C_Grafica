@@ -48,7 +48,12 @@ int temp_laberinto[31][31]={//despues sera generado por dfs
 int colors = 0;// variable que permite indicar el color seleccionado
 float izq_dere= 0.0f; // variable para modificar la posicion de la luz en el eje X
 float arriba_abajo = 0.0f; // variable para modificar la posicion de la luz en el eje Y
-
+float camara_x = 0.0f;
+float camara_y = 0.0f;
+float camara_z = 0.0f;
+int girolookat_x= 0.0;
+int girolookat_y= 0.0;
+int girolookat_z= 0.0;
 //texturas
 GLuint texID[numTEXT];
 char* textureFileNames[numTEXT] = {"assets/metal_test.jpeg","assets/piso_2.jpeg","assets/pared_pasto.jpeg"};//ignorar advertencia por esta linea
@@ -85,7 +90,7 @@ void loadTextures() {
             glBindTexture( GL_TEXTURE_2D, texID[i] );  // Cargando textura
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imgWidth, imgHeight, 0, format,GL_UNSIGNED_BYTE, imgData);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            
+
         }
         else {
             printf("Fallo la carga de textura %s\n", textureFileNames[i]);
@@ -104,13 +109,13 @@ bool loadOBJ(const char* path, vector<glm::vec3> & out_vertices,
     FILE * file = fopen(path,"r");
     if(file== NULL){
         printf("No se pudo leer el archivo\n");
-        return false;        
+        return false;
     }
     while(true){
         char lineHeader[128];//para cada linea
         int res = fscanf(file,"%s", lineHeader);
         if(res == EOF)//chequea si encuentra el final de la linea
-            break;    
+            break;
         else{
             //verificamos las cabezeras de cada linea y luego parseamos los datos
             if( strcmp(lineHeader, "v" ) == 0){
@@ -134,7 +139,7 @@ bool loadOBJ(const char* path, vector<glm::vec3> & out_vertices,
                 int matches = fscanf(file, "%d/%d/%d %d/%d/%d %d/%d/%d\n", &vertexIndex[0],&uvIndex[0],
                                      &normalIndex[0], &vertexIndex[1], &uvIndex[1], &normalIndex[1],
                                      &vertexIndex[2], &uvIndex[2], &normalIndex[2] );
-                
+
                 if(matches!=9){
                     printf("No se pudo parsear las lineas que contienen las caras\n");
                     return false;
@@ -181,6 +186,31 @@ void keyboardFunc( unsigned char key, int x, int y ){
 		colors+=1;
         colors%=4;
         break;
+    case 'w':
+      camara_y+=0.5; break;
+    case 's':
+      camara_y-=0.5; break;
+    case 'a':
+      camara_x-=0.5; break;
+    case 'd':
+      camara_x+=0.5; break;
+    case 'u':
+      camara_z+= 0.5; break;
+    case 'l':
+      camara_z-=0.5; break;
+    case 'g':
+      girolookat_x =(girolookat_x+5) % 360;break;
+    case 'G':
+      girolookat_x =(girolookat_x-5) % 360;break;
+    case 'h':
+      girolookat_y =(girolookat_y+5) % 360;break;
+    case 'H':
+      girolookat_y =(girolookat_y-5) % 360;break;
+    case 'j':
+      girolookat_z =(girolookat_z+5) % 360;break;
+    case 'J':
+      girolookat_z =(girolookat_z-5) % 360;break;
+
     default:
         cout << "Unhandled key press " << key << "." << endl;
     }
@@ -223,9 +253,9 @@ void dibujarObj(vector<glm::vec3> vertices, vector<glm::vec2> uvs, vector <glm::
             glTexCoord2f(uvs[i+1].x,uvs[i+1].y);
             glNormal3d(normales[(i+2)].x,normales[(i+2)].y,normales[(i+2)].z);
             glVertex3d(vertices[(i+2)].x,vertices[(i+2)].y,vertices[(i+2)].z);
-            glTexCoord2f(uvs[i+2].x,uvs[i+2].y);    
+            glTexCoord2f(uvs[i+2].x,uvs[i+2].y);
             glEnd();
-            } 
+            }
         glDisable(GL_TEXTURE_2D);
 }
 
@@ -234,7 +264,7 @@ void piso(void){
     glBindTexture(GL_TEXTURE_2D, texID[1]);//textura del piso
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    
+
     glBegin(GL_QUADS);
     glVertex3f(0.0,0.0,0.0);
     glTexCoord2f(0.0,0.0);
@@ -248,13 +278,13 @@ void piso(void){
     glDisable(GL_TEXTURE_2D);
 }
 void draw(void){
-    
+
     vector<glm::vec3> vertices;
     vector<glm::vec2> uvs;
     vector<glm::vec3> normales;
-    
-    
-    
+
+
+
     bool bloque = loadOBJ("assets/test_4.obj",vertices,uvs,normales);
 	if(bloque){ // verificamos si pudo leer el archivo
         int i,j;
@@ -274,7 +304,7 @@ void draw(void){
         }
         glPopMatrix();
     }
-    
+
     glPushMatrix();
     glTranslatef(-32.0,0.0,-32.0);
     glScalef(62.0,0.0,62.0);
@@ -284,13 +314,13 @@ void draw(void){
 void drawScene(void){
     int i;
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glMatrixMode( GL_MODELVIEW );  
-    glLoadIdentity();             
-    // camara posicionada en [0,10,10] mirando hacia [0,0,0] 
+    glMatrixMode( GL_MODELVIEW );
+    glLoadIdentity();
+    // camara posicionada en [0,10,10] mirando hacia [0,0,0]
     // con [0,0,1] como vector hacia arriba
-    gluLookAt(0.0, 70.0, 10.0,
-              0.0, 0.0, 0.0,
-              0.0, 1.0, 0.0);
+    gluLookAt((GLfloat)0.0+camara_x,(GLfloat) 0.0+camara_y,(GLfloat) 0.0+camara_z,
+              (GLfloat)2.0+camara_x,(GLfloat) 2.0+camara_y,(GLfloat) 2.0+camara_z,
+              (GLfloat) girolookat_x,(GLfloat) girolookat_y,(GLfloat) girolookat_z);
     GLfloat diffColors[4][4] = { {0.5, 0.5, 0.9, 1.0},
                                  {0.9, 0.5, 0.5, 1.0},
                                  {0.5, 0.9, 0.3, 1.0},
@@ -313,8 +343,8 @@ void drawScene(void){
 }
 
 void initRendering(){
-    glEnable(GL_DEPTH_TEST);   
-    glEnable(GL_LIGHTING);     
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);       // luz #0.
     //glEnable(GL_NORMALIZE);
     glEnable(GL_COLOR_MATERIAL);
@@ -339,8 +369,8 @@ int main( int argc, char** argv ){
     glutInitWindowSize( 800, 800 );
     glutCreateWindow("Test");
     initRendering();
-    glutKeyboardFunc(keyboardFunc); 
-    glutSpecialFunc(specialFunc);   
+    glutKeyboardFunc(keyboardFunc);
+    glutSpecialFunc(specialFunc);
     glutReshapeFunc( reshapeFunc );
     glutDisplayFunc( drawScene );
     glutMainLoop( );
