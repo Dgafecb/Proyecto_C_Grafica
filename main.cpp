@@ -186,18 +186,19 @@ void keyboardFunc( unsigned char key, int x, int y ){
 		colors+=1;
         colors%=4;
         break;
-    case 'w':
+    case 'r':
       camara_y+=0.5; break;
-    case 's':
+    case 'f':
       camara_y-=0.5; break;
     case 'a':
-      camara_x-=0.5; break;
-    case 'd':
       camara_x+=0.5; break;
-    case 'u':
+    case 'd':
+      camara_x-=0.5; break;
+    case 'w':
       camara_z+= 0.5; break;
-    case 'l':
+    case 's':
       camara_z-=0.5; break;
+      /*
     case 'g':
       girolookat_x =(girolookat_x+5) % 360;break;
     case 'G':
@@ -210,7 +211,7 @@ void keyboardFunc( unsigned char key, int x, int y ){
       girolookat_z =(girolookat_z+5) % 360;break;
     case 'J':
       girolookat_z =(girolookat_z-5) % 360;break;
-
+    */
     default:
         cout << "Unhandled key press " << key << "." << endl;
     }
@@ -306,7 +307,7 @@ void draw(void){
     }
 
     glPushMatrix();
-    glTranslatef(-32.0,0.0,-32.0);
+    glTranslatef(-32.0,-2.5,-32.0);
     glScalef(62.0,0.0,62.0);
     piso();
     glPopMatrix();
@@ -318,9 +319,9 @@ void drawScene(void){
     glLoadIdentity();
     // camara posicionada en [0,10,10] mirando hacia [0,0,0]
     // con [0,0,1] como vector hacia arriba
-    gluLookAt((GLfloat)0.0+camara_x,(GLfloat) 0.0+camara_y,(GLfloat) 0.0+camara_z,
-              (GLfloat)2.0+camara_x,(GLfloat) 2.0+camara_y,(GLfloat) 2.0+camara_z,
-              (GLfloat) girolookat_x,(GLfloat) girolookat_y,(GLfloat) girolookat_z);
+    gluLookAt((GLfloat)0.0+camara_x,(GLfloat) 5.0+camara_y,(GLfloat) -30.0+camara_z,
+              (GLfloat)0.0+camara_x,(GLfloat) 0.0+camara_y,(GLfloat) 0.0+camara_z,
+                0,1,0);
     GLfloat diffColors[4][4] = { {0.5, 0.5, 0.9, 1.0},
                                  {0.9, 0.5, 0.5, 1.0},
                                  {0.5, 0.9, 0.3, 1.0},
