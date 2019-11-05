@@ -1,6 +1,8 @@
 //librerias:
 //glm: sudo apt-get install libglm-dev
 //freeImage: sudo apt-get install libfreeimage3 libfreeimage-dev
+//para correr:
+//g++ main.cpp -lGL -lGLU -lglut -lfreeimage
 #include <stdlib.h>
 #include <GL/glut.h>
 #include <GL/freeglut.h>
@@ -243,23 +245,29 @@ void specialFunc( int key, int x, int y ){
     glutPostRedisplay();
 }
 void dibujarObj(vector<glm::vec3> vertices, vector<glm::vec2> uvs, vector <glm::vec3> normales, int indiceTEX){
+    if(indiceTEX!=-1){
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, texID[indiceTEX]);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        }
     for(int i=0; i<vertices.size()-2;i++){ //usamos la informacion ya leida para dibujar el objeto
             int size = vertices.size();
             glBegin(GL_TRIANGLES);
             glNormal3d(normales[i].x,normales[i].y,normales[i].z);
             glVertex3d(vertices[i].x,vertices[i].y,vertices[i].z);
-            glTexCoord2f(uvs[i].x,uvs[i].y);
+            if(indiceTEX!=-1)
+                glTexCoord2f(uvs[i].x,uvs[i].y);
             glNormal3d(normales[(i+1)].x,normales[(i+1)].y,normales[(i+1)].z);
             glVertex3d(vertices[(i+1)].x,vertices[(i+1)].y,vertices[(i+1)].z);
-            glTexCoord2f(uvs[i+1].x,uvs[i+1].y);
+            if(indiceTEX!=-1)
+                glTexCoord2f(uvs[i+1].x,uvs[i+1].y);
             glNormal3d(normales[(i+2)].x,normales[(i+2)].y,normales[(i+2)].z);
             glVertex3d(vertices[(i+2)].x,vertices[(i+2)].y,vertices[(i+2)].z);
-            glTexCoord2f(uvs[i+2].x,uvs[i+2].y);
+            if(indiceTEX!=-1)                
+                glTexCoord2f(uvs[i+2].x,uvs[i+2].y);
             glEnd();
             }
+        if(indiceTEX!=-1)
         glDisable(GL_TEXTURE_2D);
 }
 
