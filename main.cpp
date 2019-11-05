@@ -12,9 +12,13 @@
 #include <sstream>
 #include <glm/glm.hpp>
 #include <FreeImage.h>
+#include <cstdio>
+#include <algorithm>
 #define numTEXT 4
+#define altura 31
+#define anchura 31
 using namespace std;
-int temp_laberinto[31][31]={//despues sera generado por dfs
+int laberinto[altura][anchura]={//despues sera generado por dfs
 {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 {1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0},
 {0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0},
@@ -289,24 +293,111 @@ void piso(void){
     glEnd();
     glDisable(GL_TEXTURE_2D);
 }
+
+void recursionL(int r, int c){
+    int rand_direcciones[4];
+    for(int i=0;i<4;i++)
+        rand_direcciones[i]=i+1;
+    random_shuffle(&rand_direcciones[0],&rand_direcciones[4]);
+     //chequeamos cada direccion
+     for (int i = 0; i < 4; i++) {
+         switch(rand_direcciones[i]){
+         case 1: // Arriba
+             //　Chequeamos si esta disponible 2 celdas hacia arriba
+             if (r - 2 <= 0)
+                 continue;
+             if (laberinto[r - 2][c] != 0) {
+                 laberinto[r-2][c] = 0;
+                 laberinto[r-1][c] = 0;
+                 recursionL(r - 2, c);
+             }
+             break;
+         case 2: // Derecha
+             // Chequeamos si esta disponible 2 celdas hacia la derecha
+             if (c + 2 >= anchura - 1)
+                 continue;
+             if (laberinto[r][c + 2] != 0) {
+                 laberinto[r][c + 2] = 0;
+                 laberinto[r][c + 1] = 0;
+                 recursionL(r, c + 2);
+             }
+             break;
+         case 3: // Abajo
+             // Chequeamos si esta disponible 2 celdas hacia abajo
+             if (r + 2 >= altura - 1)
+                 continue;
+             if (laberinto[r + 2][c] != 0) {
+                 laberinto[r+2][c] = 0;
+                 laberinto[r+1][c] = 0;
+                 recursionL(r + 2, c);
+             }
+             break;
+         case 4: // Izquierda
+             // Chequeamos si esta disponible 2 celdas hacia la izquierda
+             if (c - 2 <= 0)
+                 continue;
+             if (laberinto[r][c - 2] != 0) {
+                 laberinto[r][c - 2] = 0;
+                 laberinto[r][c - 1] = 0;
+                 recursionL(r, c - 2);
+             }
+             break;
+         }
+     }
+}    
+void generarLaberinto(){
+    //vamos a usar la variable global laberinto
+    //inicializamos todo a 1
+    int row,col;
+    for(row=0;row<altura;row++)
+        for(col=0;col<anchura;col++)
+            laberinto[row][col] = 1;
+    //seleccionamos una celda aleatoria, con tal que no este en los bordes de la matriz
+    srand(time(0));
+    row = rand()%altura;
+    while(row%2==0)
+        row = rand()%altura;
+    col = rand()%anchura;
+    while(col%2==0)
+        col = rand()%anchura;
+    laberinto[row][col] = 0;
+    //ahora usando la funcion recursionL generamos los muros del laberinto
+    recursionL(row,col);
+    //generamos las puertas
+    int n_puertas=5;
+    while(n_puertas!=0){
+        row = rand()%altura-1;
+        col = rand()%anchura-1;
+        if(laberinto[row][col] == 1&&(laberinto[row+1][col+1]==0||laberinto[row+1][col]
+            ||laberinto[row][col+1])){
+            laberinto[row][col] = -1;
+            n_puertas-=1;
+        }
+    }
+    return;    
+}
+void imprimirMatriz(){
+    int row, col;
+    for(row=0;row<altura;row++)
+        for(col=0;col<anchura;col++)
+            printf("%d ",laberinto[row][col]);
+}
 void draw(void){
 
     vector<glm::vec3> vertices;
     vector<glm::vec2> uvs;
     vector<glm::vec3> normales;
-
-
-
     bool bloque = loadOBJ("assets/test_4.obj",vertices,uvs,normales);
     //bloque=false;//quito el laberinto para poder testear la ubicacion inicial del personaje
 	if(bloque){ // verificamos si pudo leer el archivo
+        
         int i,j;
         float scale = 2.0f;
         glPushMatrix();
         glTranslatef(-32.0,0.0,-32.0);
         for(i=0;i<31;i++){
             for(j=0;j<31;j++){
-                if(temp_laberinto[i][j] == 0){
+                if(laberinto[i][j] == 0){
                     glPushMatrix();
                     glTranslatef((j+1)*scale,0.0f,(i+1)*scale);
                     glScalef(1.0f,3.0f,1.0f);
@@ -314,14 +405,14 @@ void draw(void){
                     glPopMatrix();
                 }
                 if(i!=0  && j!=0){
-                 if((temp_laberinto[i][j] == -1) && (temp_laberinto[i][j-1]==1) ){
+                 if((laberinto[i][j] == -1) && (laberinto[i][j-1]==1) ){
                     glPushMatrix();
                     glTranslatef((j+1)*scale,0.0f,(i+1)*scale);
                     glScalef(0.1f,3.0f,1.0f);
                     dibujarObj(vertices,uvs,normales,3);
                     glPopMatrix();
                 }
-                if((temp_laberinto[i][j] == -1) && (temp_laberinto[i][j-1]==0) ){
+                if((laberinto[i][j] == -1) && (laberinto[i][j-1]==0) ){
                     glPushMatrix();
                     glTranslatef((j+1)*scale,0.0f,(i+1)*scale);
                     glScalef(1.0f,3.0f,0.1f);
@@ -414,6 +505,8 @@ void initRendering(){
     //glEnable(GL_NORMALIZE);
     glEnable(GL_COLOR_MATERIAL);
     loadTextures();
+    generarLaberinto();// aca inicializo la matriz laberinto para posicionar los objetos
+    imprimirMatriz();
 
 }
 void reshapeFunc(int w, int h){
