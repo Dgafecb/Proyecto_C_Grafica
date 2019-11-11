@@ -12,12 +12,22 @@ public:
     Graph(int vertices);
     void addEdge(int src, int dest);
     void BFS(int startVertex);
+    Graph Map_create(int mapa[n][n]);
 };
 
-Graph::Graph(int vertices)
+Graph::Graph(int mapa[n][n])
 {
-    numVertices = vertices;
-    adjLists = new list[vertices];
+    int k=0
+    for(int i= 0 ; i<n; i++){
+      for (int j = 0; j < n; j++) {
+         if(mapa[i][j]== 1){
+           adjLists = new list[(i*n)+j];
+           k++;
+         }
+      }
+    }
+    numVertices= k;
+
 }
 
 void Graph::addEdge(int src, int dest)
@@ -55,4 +65,127 @@ void Graph::BFS(int startVertex)
             }
         }
     }
+}
+
+Graph Graph::Map_create(int mapa[n][n]){
+  Graph grafo;
+  for(int i=0 ; i<n ;  i++){
+    for(int j=0 ; j<n ;j++){
+      if (i==0){
+        if (j==0) {
+            if(mapa[i][j]==1){
+              if (mapa[i+1][j]==1) {
+                grafo.addEdge((i*n)+j,((i+1)*n)+j);
+              }
+              if (mapa[i][j+1]==1) {
+                grafo.addEdge((i*n)+j,(i*n)+j+1);
+              }
+            }
+        }
+        if(j==n-1){
+          if(mapa[i][j]==1){
+            if (mapa[i+1][j]==1) {
+              grafo.addEdge((i*n)+j,((i+1)*n)+j);
+            }
+            if (mapa[i][j-1]==1) {
+              grafo.addEdge((i*n)+j,(i*n)+j-1);
+            }
+          }
+        }
+        else{
+          if(mapa[i][j]==1){
+            if (mapa[i+1][j]==1) {
+              grafo.addEdge((i*n)+j,((i+1)*n)+j);
+            }
+            if (mapa[i][j-1]==1) {
+              grafo.addEdge((i*n)+j,(i*n)+j-1);
+            }
+            if (mapa[i][j+1]==1) {
+              grafo.addEdge((i*n)+j,(i*n)+j+1);
+            }
+          }
+        }
+      }
+      if(i==n-1){
+        if (j==0) {
+          if(mapa[i][j]==1){
+            if (mapa[i-1][j]==1) {
+              grafo.addEdge((i*n)+j,((i-1)*n)+j);
+            }
+            if (mapa[i][j+1]==1) {
+              grafo.addEdge((i*n)+j,(i*n)+j+1);
+            }
+          }
+        }
+        if(j==n-1){
+          if(mapa[i][j]==1){
+            if (mapa[i-1][j]==1) {
+              grafo.addEdge((i*n)+j,((i-1)*n)+j);
+            }
+            if (mapa[i][j-1]==1) {
+              grafo.addEdge((i*n)+j,(i*n)+j-1);
+            }
+          }
+        }
+        else{
+          if(mapa[i][j]==1){
+            if (mapa[i+1][j]==1) {
+              grafo.addEdge((i*n)+j,((i+1)*n)+j);
+            }
+            if (mapa[i][j+1]==1) {
+              grafo.addEdge((i*n)+j,(i*n)+j+1);
+            }
+            if (mapa[i][j-1]==1) {
+              grafo.addEdge((i*n)+j,(i*n)+j-1);
+            }
+          }
+        }
+      }
+      else{
+        if (j==0) {
+          if(mapa[i][j]==1){
+            if (mapa[i-1][j]==1) {
+              grafo.addEdge((i*n)+j,((i-1)*n)+j);
+            }
+            if (mapa[i+1][j]==1) {
+              grafo.addEdge((i*n)+j,((i+1)*n)+j);
+            }
+            if (mapa[i][j+1]==1) {
+              grafo.addEdge((i*n)+j,(i*n)+j+1);
+            }
+          }
+        }
+        if(j==n-1){
+          if(mapa[i][j]==1){
+            if (mapa[i-1][j]==1) {
+              grafo.addEdge((i*n)+j,((i-1)*n)+j);
+            }
+            if (mapa[i+1][j]==1) {
+              grafo.addEdge((i*n)+j,((i+1)*n)+j);
+            }
+            if (mapa[i][j-1]==1) {
+              grafo.addEdge((i*n)+j,(i*n)+j-1);
+            }
+          }
+        }
+        else{
+          if(mapa[i][j]==1){
+            if (mapa[i-1][j]==1) {
+              grafo.addEdge((i*n)+j,((i-1)*n)+j);
+            }
+            if (mapa[i+1][j]==1) {
+              grafo.addEdge((i*n)+j,((i+1)*n)+j);
+            }
+            if (mapa[i][j-1]==1) {
+              grafo.addEdge((i*n)+j,(i*n)+j-1);
+            }
+            if (mapa[i][j+1]==1) {
+              grafo.addEdge((i*n)+j,(i*n)+j+1);
+            }
+          }
+        }
+      }
+    }
+  }
+  return grafo;
 }
