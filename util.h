@@ -11,7 +11,7 @@ class Graph
 public:
     Graph(int vertices);
     void addEdge(int src, int dest);
-    void BFS(int startVertex);
+    void BFS(int startVertex,int endVertex);
     Graph Map_create(int mapa[n][n]);
 };
 
@@ -36,7 +36,7 @@ void Graph::addEdge(int src, int dest)
     adjLists[dest].push_back(src);
 }
 
-void Graph::BFS(int startVertex)
+void Graph::BFS(int startVertex, int endVertex)
 {
     visited = new bool[numVertices];
     for(int i = 0; i < numVertices; i++)
