@@ -1,6 +1,8 @@
+#ifndef GRAFO
+#define GRAFO
+#include "cola.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
 
 typedef struct Node{
 	struct Node *prox;
@@ -18,42 +20,6 @@ typedef struct List{
 	int Casilla;   // si casilla = 1 entonces es un muro, si casilla = 0 no es un muro
 }List;
 
-typedef struct Cola{
-	struct Node *iq;
-	struct Node *fq;
-}Cola;
-
-//FUNCIONES DE LA COLA
-Cola* crearCola(){
-	   return calloc(1, sizeof(Cola));
-}
-int colaVacia(Cola *Q){
-	return (Q->iq == NULL);
-}
-void agregarCola(Cola *Q,int posicion_f,int posicion_c){
-		Node *node = calloc(1,sizeof(Node));
-		node->pf = posicion_f;
-    	node->pc = posicion_c;
-		if(colaVacia(Q)){
-			Q->iq = node;
-			Q->fq = node;
-			}
-		else{
-			Q->fq->prox = node;
-			Q->fq = node;
-			}
-}
-void retirarCola(Cola *Q,int *f,int *c){
-	if(colaVacia(Q)){
-		*f = -1;
-		*c = -1;
-	}
-	else{
-		*f = Q->iq->pf;
-		*c = Q->iq->pc;
-		Q->iq = Q->iq->prox;
-		}
-}
 // FUNCIONES DE LA LISTA
 List *List_Create(){
     return calloc(1, sizeof(List));
@@ -78,6 +44,7 @@ void List_Insertar(List *list, int posicion_f,int posicion_c){
 int Lista_Vacia(List *list){
 		return (list->first == NULL);
 }
+
 // funciones de grafo
 void Grafo_Create(List *G[F][C],int A[F][C]){
 	int f,c;
@@ -174,6 +141,9 @@ void BFS(List *G[F][C],int sf,int sc){
 		}
 
 	}
+
+#endif
+/*
 int main(){
   int A[n][n]= {}
   int posiionenemigo[2]={fr,cr};
@@ -183,3 +153,4 @@ int main(){
   BFS(G,posiionenemigo[0],posiionenemigo[1]);
 
 }
+*/
