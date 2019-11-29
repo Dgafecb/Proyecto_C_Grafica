@@ -14,6 +14,7 @@
 #include <FreeImage.h>
 #include <cstdio>
 #include <algorithm>
+#include <cstring>
 #define numTEXT 4
 #define altura 31
 #define anchura 31
@@ -51,17 +52,18 @@ int laberinto[altura][anchura]={//despues sera generado por dfs
 {0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1},
 {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 };
-int colors = 0;// variable que permite indicar el color seleccionado
-float izq_dere= 0.0f; // variable para modificar la posicion de la luz en el eje X
-float arriba_abajo = 0.0f; // variable para modificar la posicion de la luz en el eje Y
-float camara_x = -22.5f;
-float camara_y = 0.0f;
-float camara_z = -22.5f;
-float posicion_x = 0.0f;
-float posicion_z = 0.0f;
-int girolookat_x= 0.0;
-int girolookat_y= 0.0;
-int girolookat_z= 0.0;
+
+  int colors = 0;// variable que permite indicar el color seleccionado
+  float izq_dere= 0.0f; // variable para modificar la posicion de la luz en el eje X
+  float arriba_abajo = 0.0f; // variable para modificar la posicion de la luz en el eje Y
+  float camara_x = -22.5f;
+  float camara_y = 0.0f;
+  float camara_z = -22.5f;
+  float posicion_x = 0.0f;
+  float posicion_z = 0.0f;
+  int girolookat_x= 0.0;
+  int girolookat_y= 0.0;
+  int girolookat_z= 0.0;
 //texturas
 GLuint texID[numTEXT];
 char* textureFileNames[numTEXT] = {"assets/metal_test.jpeg","assets/piso_2.jpeg","assets/pared_pasto.jpeg","assets/puerta.jpeg"};//ignorar advertencia por esta linea
@@ -194,7 +196,7 @@ void keyboardFunc( unsigned char key, int x, int y ){
     case 'f':
       camara_y-=0.5; break;
     case 'a':
-      camara_x-=0.5; 
+      camara_x-=0.5;
       posicion_x-=0.5;
       break;
     case 'd':
@@ -202,11 +204,11 @@ void keyboardFunc( unsigned char key, int x, int y ){
       posicion_x+=0.5;
       break;
     case 'w':
-      camara_z-= 0.5; 
+      camara_z-= 0.5;
       posicion_z-=0.5;
       break;
     case 's':
-      camara_z+=0.5; 
+      camara_z+=0.5;
       posicion_z+=0.5;
       break;
       /*
@@ -267,14 +269,13 @@ void dibujarObj(vector<glm::vec3> vertices, vector<glm::vec2> uvs, vector <glm::
                 glTexCoord2f(uvs[i+1].x,uvs[i+1].y);
             glNormal3d(normales[(i+2)].x,normales[(i+2)].y,normales[(i+2)].z);
             glVertex3d(vertices[(i+2)].x,vertices[(i+2)].y,vertices[(i+2)].z);
-            if(indiceTEX!=-1)                
+            if(indiceTEX!=-1)
                 glTexCoord2f(uvs[i+2].x,uvs[i+2].y);
             glEnd();
             }
         if(indiceTEX!=-1)
         glDisable(GL_TEXTURE_2D);
 }
-
 void piso(void){
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, texID[1]);//textura del piso
@@ -293,7 +294,6 @@ void piso(void){
     glEnd();
     glDisable(GL_TEXTURE_2D);
 }
-
 void recursionL(int r, int c){
     int rand_direcciones[4];
     for(int i=0;i<4;i++)
@@ -344,7 +344,7 @@ void recursionL(int r, int c){
              break;
          }
      }
-}    
+}
 void generarLaberinto(){
     //vamos a usar la variable global laberinto
     //inicializamos todo a 1
@@ -374,7 +374,7 @@ void generarLaberinto(){
             n_puertas-=1;
         }
     }
-    return;    
+    return;
 }
 void imprimirMatriz(){
     int row, col;
@@ -390,7 +390,7 @@ void draw(void){
     bool bloque = loadOBJ("assets/test_4.obj",vertices,uvs,normales);
     //bloque=false;//quito el laberinto para poder testear la ubicacion inicial del personaje
 	if(bloque){ // verificamos si pudo leer el archivo
-        
+
         int i,j;
         float scale = 2.0f;
         glPushMatrix();
@@ -441,7 +441,7 @@ void draw(void){
         glScalef(0.9f,0.8f,0.9f);
         dibujarObj(vertices_2,uvs_2,normales_2,0);
         glPopMatrix();
-        
+
     }
 }
 void drawScene(void){
@@ -457,7 +457,7 @@ void drawScene(void){
     if(camara_x<-22.5){
         camara_x = -22.5;
         posicion_x +=0.5;
-        
+
     }
     if(camara_x>22.5){
         camara_x = 22.5;
@@ -466,14 +466,14 @@ void drawScene(void){
     if(camara_z<-22.5){
         camara_z = -22.5;
         posicion_z += 0.5;
-        
+
     }
     if(camara_z>22.5){
         camara_z = 22.5;
         posicion_z-=0.5;
     }
-    
-        
+
+
     gluLookAt((GLfloat)0.0+camara_x,(GLfloat) 20.0+camara_y,(GLfloat) 1.0+camara_z,
               (GLfloat)0.0+camara_x,(GLfloat) 0.0+camara_y,(GLfloat) 0.0+camara_z,
                 0,1,0);
@@ -497,7 +497,6 @@ void drawScene(void){
     draw();
     glutSwapBuffers();
 }
-
 void initRendering(){
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_LIGHTING);
@@ -519,7 +518,6 @@ void reshapeFunc(int w, int h){
     glLoadIdentity();
     gluPerspective(50.0, 1.0, 1.0, 100.0);
 }
-
 int main( int argc, char** argv ){
     glutInit(&argc,argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH );
